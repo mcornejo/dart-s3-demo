@@ -6,8 +6,8 @@ import 'package:s3connection/space.dart' as dospace;
 import 'package:http/http.dart' as http;
 
 const String region = "gra";
-const String accessKey = "ACCESS_KEY";
-const String secretKey = "SECRET_KEY";
+const String accessKey = "AWS_ACCESS_KEY";
+const String secretKey = "AWS_SECRET_KEY";
 const String bucketName = "mobile-app-recordings";
 
 
@@ -25,7 +25,16 @@ main() async {
       print('key: ${content.key}');
     }
   }
+
+
   dospace.Bucket bucket = spaces.bucket(bucketName);
+  // DOWNLOAD
+
+  const String key = "471ae6f4-cbc6-49b4-8cfe-09b4bd0f541e-07-2023-0.6502146863666474-fr-file-prod.jpg";
+  const String output = "file-prod.jpg";
+  await bucket.downloadFile(key, output);
+
+
   String? etag = await bucket.uploadFile(
       'README.md', 'README.md', 'text/plain', dospace.Permissions.private);
   print('upload: $etag');

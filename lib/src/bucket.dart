@@ -98,8 +98,23 @@ class Bucket extends Client {
           }
         }
       }
-
   }
+
+  Future<void> downloadFile(String key, String filename) async {
+    Uri uri =  Uri.parse(endpointUrl + '/' + key);
+    print("download uri: ${uri}");
+    http.Request request = new http.Request('GET', uri);
+    Digest contentSha256 = await sha256.convert(utf8.encode(""));  // empty payload
+    signRequest(request, contentSha256: contentSha256);
+
+    File file = new File(filename);
+    if(file.existsSync()) file.deleteSync();
+    var ios = file.openWrite(mode: FileMode.append);
+    http.StreamedResponse response = await httpClient.send(request);
+    await response.stream.pipe(ios);
+    ios.close();
+  }
+
 
   /// Uploads file. Returns Etag.
   Future<String?> uploadFile(
